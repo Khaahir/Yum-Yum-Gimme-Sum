@@ -1,0 +1,53 @@
+.menu-body {
+  height: 844px;
+  width: 390px;
+  background-color: #8ed8bf;
+  background-image: url("/src/assets/menu-background.svg");
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.menu-icon {
+  width: 4rem;
+  height: 4rem;
+  grid-column: 1/2;
+  grid-row: 1;
+  margin: 1rem;
+}
+
+.menu-container {
+  height: 689px;
+  width: 358px;
+  background-color: #605858;
+  color: rgba(244, 243, 241, 0.9411764706);
+  grid-row: 2/8;
+  grid-column: 1/9;
+  justify-self: center;
+  border-radius: 0.5rem;
+}
+
+.menu-title {
+  font-size: 2rem;
+  margin-inline: 0.5rem;
+}
+
+ul {
+  padding-left: 0em;
+  margin-left: 0rem;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(244, 243, 241, 0.1176470588);
+  padding: 1rem;
+}
+
+.In-menu-title {
+  font-size: 1.3rem;
+}
+
+.ingrediences {
+  font-size: 0.8rem;
+}/*# sourceMappingURL=Menu.css.map */

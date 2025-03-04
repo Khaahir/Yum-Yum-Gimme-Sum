@@ -1,0 +1,77 @@
+.cart-container {
+  position: absolute;
+  height: 844px;
+  width: 390px;
+  background-color: #eeeeee;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.btn-cart {
+  width: 4rem;
+  height: 4rem;
+  margin: 1rem;
+  cursor: pointer;
+  position: relative;
+  left: 12rem;
+  z-index: 2;
+}
+
+.cart-orders {
+  border-top: dotted gray;
+  border-bottom: dotted gray;
+  grid-column: 1/9;
+  grid-row: 2/6;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.order-items {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  list-style: none;
+}
+
+.In-order-title {
+  font-size: 2rem;
+}
+
+.in-menu-price {
+  font-size: 2rem;
+}
+
+.total {
+  display: flex;
+  grid-column: 1/9;
+  grid-row: 8;
+  height: 4rem;
+  background-color: rgba(53, 49, 49, 0.2392156863);
+  border-radius: 0.5rem;
+  margin-inline: 0.5rem;
+  border: none;
+  align-self: flex-end;
+  align-items: center;
+  justify-content: space-between;
+}
+.total span {
+  margin-inline: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.total .in-cart-price {
+  font-size: 2rem;
+}
+
+.btn-incart {
+  grid-column: 1/9;
+  grid-row: 9;
+  height: 4rem;
+  background-color: #353131;
+  border-radius: 0.5rem;
+  margin-inline: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  font-size: 2rem;
+}/*# sourceMappingURL=Order.css.map */
