@@ -29,7 +29,7 @@ function Order() {
           </div>
           <Link className="btn-incart" to="/eta">
             <Button Clicked={() => dispatch(toggleFunc())} variant={"incart"}>
-              Take my money!
+              TAKE MY MONEY!
             </Button>
           </Link>
         </section>

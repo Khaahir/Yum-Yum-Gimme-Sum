@@ -1,5 +1,8 @@
 // sass variabler
-
+@font-face {
+  font-family: fira;
+  src: url("./FiraSans-ExtraBold.ttf");
+}
 // colors
 $background-primary: #605858;
 $button-color: #353131;
@@ -7,3 +10,4 @@ $checkout-buttom-color: #3531313d;
 $menu-background-color: #8ed8bf;
 $text-color: #f4f3f1f0;
 $inMenu-box: #f4f3f11e;
+$main-font: fira;

@@ -1,7 +1,12 @@
 import React from "react";
+import { UseSelector, useDispatch } from "react-redux";
+("");
 
 function Bill() {
-  return <div>Bill</div>;
+  const isOpen = useSelector(
+    (state: { toggle: { value: boolean } }) => state.toggle.value
+  );
+  const dispatch = useDispatch();
 }
 
 export default Bill;
