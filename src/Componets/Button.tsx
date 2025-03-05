@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 
 interface IButtonProps {
   Clicked?: () => void;
-  NewPage?: () => void;
   variant: string;
   children: ReactNode;
 }

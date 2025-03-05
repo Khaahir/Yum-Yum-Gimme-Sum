@@ -18,7 +18,9 @@ function Eta() {
         <Link className="btn-new-order" to="/">
           <Button variant="new-order">GÖR EN NY BESTÄLLNING</Button>
         </Link>
-        <Button variant="show-bill">SE KVITTO</Button>
+        <Link to={"/bill"} className="btn-show-bill">
+          <Button variant="show-bill">SE KVITTO</Button>
+        </Link>
       </section>
     </div>
   );

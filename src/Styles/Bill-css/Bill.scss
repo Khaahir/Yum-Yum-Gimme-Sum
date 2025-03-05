@@ -1,0 +1,97 @@
+@use "../../sass/sass.scss" as *;
+
+.bill-body {
+  height: 844px;
+  width: 390px;
+  background-color: $background-primary;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  align-items: center;
+  justify-items: center;
+}
+
+.bill-icon {
+  align-self: baseline;
+  margin: 1rem;
+}
+
+.bill-container {
+  height: 470px;
+  width: 358px;
+  background-color: #eeee;
+  grid-template-rows: 2/8;
+  grid-column: 1/9;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.bill-color-logo {
+  grid-column: 1/9;
+  justify-self: center;
+  grid-row: 1;
+  margin-top: 2rem;
+}
+
+.bill-title {
+  grid-column: 1/9;
+  align-self: center;
+  justify-self: center;
+  grid-row: 2;
+}
+
+.bill-order-number {
+  grid-column: 1/9;
+  grid-row: 2;
+  justify-self: center;
+  align-self: center;
+  margin-top: 3rem;
+}
+
+.bill-items {
+  display: flex;
+  font-size: 1.5rem;
+  list-style: none;
+  justify-content: space-between;
+  width: 340px;
+}
+
+.bill-total {
+  width: 100%;
+  display: flex;
+  grid-column: 1/9;
+  grid-row: 8;
+  height: 4rem;
+  background-color: #3531313d;
+  border-radius: 0.2rem;
+  border: none;
+  align-items: center;
+  justify-content: space-between;
+  span {
+    margin-inline: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .in-cart-price {
+    font-size: 2rem;
+  }
+}
+
+.btn-in-bill {
+  grid-column: 1/9;
+  grid-row: 9;
+  height: 4rem;
+  width: 92%;
+  background-color: $button-color;
+  border-radius: 0.2rem;
+  margin-inline: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+  color: #eeeeee;
+  grid-row: 9;
+}
