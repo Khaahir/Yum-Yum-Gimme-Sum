@@ -27,6 +27,7 @@
   grid-column: 1/9;
   justify-self: center;
   border-radius: 0.5rem;
+  overflow-y: scroll;
 }
 .menu-title {
   font-size: 2rem;
@@ -40,6 +41,7 @@ ul {
 .menu {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   background-color: $inMenu-box;
   padding: 1rem;
 }

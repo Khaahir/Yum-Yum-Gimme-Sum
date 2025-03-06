@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import toggleReducer from "./toggleSlice";
-import apiReducer from "../redux/apiSlice";
-
+import counterReducer from "./counterSlice";
 export const store = configureStore({
-  reducer: { toggle: toggleReducer },
+  reducer: {
+    toggle: toggleReducer,
+    counter: counterReducer,
+  },
 });
 
 export default store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
