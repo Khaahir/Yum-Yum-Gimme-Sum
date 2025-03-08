@@ -3,13 +3,11 @@ import { useState, useEffect } from "react"; // Import useState and useEffect
 import Menu from "../Pages/Menu";
 import Eta from "../Pages/Eta";
 import Bill from "../Pages/Bill";
-import Counter from "./counter";
 
 function AppRoutes() {
   return (
     <>
       <Router>
-        <Counter />
         <Routes>
           <Route path="/" element={<Menu />} />
           {/* Pass apiKeys as a prop */}

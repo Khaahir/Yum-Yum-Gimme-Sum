@@ -1,12 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import toggleReducer from "./toggleSlice";
-import apiKeyReducer from "./apiKeySlice";
-import counterReducer from "./counterSlice";
+import apiReducer from "./apiSlice";
 export const store = configureStore({
   reducer: {
     toggle: toggleReducer,
-    counter: counterReducer,
-    apiKey: apiKeyReducer,
+    apidata: apiReducer,
   },
 });
 
