@@ -1,147 +1,121 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-
-// Definiera typen för nyckeln som en string
-interface keyDataType {
-  key: string;
-}
-
-export interface MenuItem {
+type OrderType = {
+  id: number;
+  quantity: number;
+  name: string;
   price: number;
+};
+
+interface MenuItems {
   name: string;
   id: number;
+  price: number;
   type: string;
   ingredients: null;
-  wonton: string;
+}
+interface errors {
+  error: { message: string };
 }
 
-interface cartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-}
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  fetchApiKey,
+  fetchTenant,
+  fetchMenu,
+  addToCart,
+  fetchOrderStatus,
+} from "./api";
 
-let menuData = [];
+// 🗝️ Hämta API-nyckeln
+export const getApiKey = createAsyncThunk("auth/getApiKey", async () => {
+  return await fetchApiKey();
+});
 
-// Uppdatera fetchData för att returnera ett objekt (inte en array)
-export const fetchData = createAsyncThunk<keyDataType, void>(
-  "api/fetchkey",
-  async () => {
-    const resp = await fetch(
-      "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/keys",
-      {
-        method: "POST",
-      }
-    );
-    if (!resp.ok) {
-      throw new Error("något gick fel");
-    }
+export const getTenant = createAsyncThunk(
+  "tenant/getTenant",
+  async (_, { getState }) => {
+    const state = getState() as { api: { key: string | null } };
+    if (!state.api.key) throw new Error("API key is missing");
 
-    return resp.json();
-  }
-);
-export const fetchDataMenu = createAsyncThunk<MenuItem[], void>(
-  "api/fetchData",
-  async () => {
-    const resp = await fetch(
-      "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com/menu",
-      {
-        method: "GET",
-        headers: { "x-zocom": "hello" },
-      }
-    );
-    if (!resp.ok) {
-      throw new Error("något gick fel");
-    }
-    menuData = await resp.json();
-    return menuData.items;
+    const defaultName = "YUMYUM";
+    return await fetchTenant(state.api.key, defaultName);
   }
 );
 
-interface ApiState {
-  cart: cartItem[];
-  apikey: keyDataType | null;
-  menuData: MenuItem[]; // Vi hanterar data som ett objekt
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
-}
+export const getMenu = createAsyncThunk(
+  "menu/getMenu",
+  async (_, { getState }) => {
+    const state = getState() as { api: { key: string | null } };
+    if (!state.api.key) throw new Error("API-nyckel saknas");
 
+    return await fetchMenu(state.api.key);
+  }
+);
+// 🛒 Lägg till order i varukorgen
+export const sendOrder = createAsyncThunk(
+  "cart/sendOrder",
+  async ({ key, order }: { key: string; order: string }) => {
+    return await addToCart(key, order); // ✅
+  }
+);
+
+// 📦 Hämta orderstatus (ETA och ordernummer)
+export const getOrderStatus = createAsyncThunk(
+  "order/getOrderStatus",
+  async ({ key, id }: { key: string; id: number }) => {
+    return await fetchOrderStatus(key, id); // ✅
+  }
+);
+
+// 🗄️ Redux-slice för API-hantering
 const apiSlice = createSlice({
-  name: "apiPosts",
+  name: "api",
   initialState: {
-    cart: [],
-    apikey: null,
-    menuData: [],
-    status: "idle",
-    error: null,
-  } as ApiState,
-  reducers: {
-    addToCart: (state, action: PayloadAction<cartItem>) => {
-      const item = action.payload;
-      const existingItem = state.cart.find(
-        (cartItem) => cartItem.id === item.id
-      );
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        state.cart.push({ ...item, quantity: 1 });
-      }
-    },
-    removeFromCart: (state, action: PayloadAction<number>) => {
-      state.cart = state.cart.filter((item) => item.id !== action.payload);
-    },
-    increaseQuantity: (state, action: PayloadAction<number>) => {
-      const existingItem = state.cart.find(
-        (item) => item.id === action.payload
-      );
-      if (existingItem) {
-        existingItem.quantity += 1;
-      }
-    },
-    decreaseQuantity: (state, action: PayloadAction<number>) => {
-      const existingItem = state.cart.find(
-        (item) => item.id === action.payload
-      );
-      if (existingItem && existingItem.quantity > 1) {
-        existingItem.quantity -= 1;
-      }
-    },
+    key: "", // ✅ "apiKey" är nu "key"
+    tenant: null,
+    menu: [] as MenuItems[],
+    cart: [] as OrderType[],
+    orderStatus: null,
+    loading: false,
+    error: null as string | null,
   },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchData.pending, (state) => {
-        state.status = "loading";
+      .addCase(getApiKey.fulfilled, (state, action) => {
+        state.key = action.payload; // ✅ Sparar API-nyckeln i state
       })
-      .addCase(
-        fetchData.fulfilled,
-        (state, action: PayloadAction<keyDataType>) => {
-          console.log("Data fetched:", action.payload);
-          state.status = "succeeded";
-          state.apikey = action.payload;
+      .addCase(getTenant.fulfilled, (state, action) => {
+        state.tenant = action.payload;
+      })
+      .addCase(getMenu.fulfilled, (state, action) => {
+        state.menu = action.payload;
+      })
+      .addCase(sendOrder.fulfilled, (state, action) => {
+        state.cart.push(action.payload);
+      })
+      .addCase(getOrderStatus.fulfilled, (state, action) => {
+        state.orderStatus = action.payload;
+      })
+      .addMatcher(
+        (action) => action.type.endsWith("/pending"),
+        (state) => {
+          state.loading = true;
         }
       )
-      .addCase(fetchData.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message || "Något gick fel";
-      })
-
-      .addCase(fetchDataMenu.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchDataMenu.fulfilled,
-        (state, action: PayloadAction<MenuItem[]>) => {
-          console.log("Data fetched:", action.payload);
-          state.status = "succeeded";
-          state.menuData = action.payload;
+      .addMatcher(
+        (action) => action.type.endsWith("/fulfilled"),
+        (state) => {
+          state.loading = false;
         }
       )
-      .addCase(fetchDataMenu.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message || "Något gick fel";
-      });
+      .addMatcher(
+        (action): action is errors => action.type.endsWith("/rejected"),
+        (state, action) => {
+          state.loading = false;
+          state.error = action.error.message;
+        }
+      );
   },
 });
-export const { addToCart, decreaseQuantity, increaseQuantity, removeFromCart } =
-  apiSlice.actions;
+
 export default apiSlice.reducer;
