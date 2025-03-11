@@ -1,55 +1,64 @@
-const baseUrl = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com";
-
+import { CartProducts } from "./types";
+const BaseUrl = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com";
 export const fetchApiKey = async () => {
-  const resp = await fetch(`${baseUrl}/keys`, {
+  const response = await fetch(`${BaseUrl}/keys`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
   });
-  const keyData = await resp.json();
-  return keyData.key;
+  const data = await response.json();
+  const apiKey = data;
+  console.log(data);
+  return apiKey;
 };
 
-export const fetchTenant = async (
-  key: string,
-  name: string
-): Promise<{ id: number; name: string }> => {
-  const response = await fetch("https://ditt-api.com/tenant", {
+export const fetchTenant = async () => {
+  const diffname = `persson_${Date.now()}`;
+  const apiKey = await fetchApiKey();
+  const response = await fetch(`${BaseUrl}/tenants`, {
     method: "POST",
-    headers: {
-      "x-zocom": `${key}`,
-    },
-    body: JSON.stringify({ name }),
+    headers: { "Content-Type": "application/json", "x-zocom": apiKey },
+    body: JSON.stringify({ name: `${diffname}` }),
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch tenant information");
+  console.log(apiKey);
+  const data = await response.json();
+  console.log("tenant data resp: ", data);
+};
+
+export const fetchMenu = async () => {
+  const apiKey = await fetchApiKey();
+  const response = await fetch(`${BaseUrl}/menu`, {
+    method: "GET",
+    headers: { "x-zocom": apiKey },
+  });
+  const data = await response.json();
+  console.log(data.items);
+  console.log(apiKey);
+  return data.items;
+};
+
+export const handleCheckout = async (cartItems: CartProducts[]) => {
+  if (!cartItems || cartItems.length === 0) {
+    console.log("Cart is empty! Cannot place an order.");
+    return;
   }
 
-  return await response.json(); // 🔥 Return tenant data
-};
+  try {
+    const response = await fetch(`${BaseUrl}/{tenant}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-zocom": "DIN_API_NYCKEL",
+      },
+      body: JSON.stringify({
+        items: cartItems.map((item) => item.id),
+      }),
+    });
 
-export const fetchMenu = async (key: string) => {
-  const resp = await fetch(`${baseUrl}/menu`, {
-    method: "GET",
-    headers: { "x-zocom": `${key}` },
-  });
-  const data = await resp.json();
-  return await data.items;
-};
-
-export const addToCart = async (Key: string, order: any) => {
-  const resp = await fetch(`${baseUrl}/tenant/orders`, {
-    method: "POST",
-    headers: { "x-zocom": `${Key}` },
-    body: JSON.stringify(order),
-  });
-  return await resp.json();
-};
-
-export const fetchOrderStatus = async (key: string, id: number) => {
-  const resp = await fetch(`${baseUrl}/ tenant/orders${id}`, {
-    method: "GET",
-    headers: { "x-zocom": `${key}` },
-  });
-
-  return await resp.json();
+    const etaData = await response.json();
+    console.log("Order placed successfully!", etaData);
+    return etaData;
+  } catch (error) {
+    console.error("Error placing order:", error);
+  }
 };

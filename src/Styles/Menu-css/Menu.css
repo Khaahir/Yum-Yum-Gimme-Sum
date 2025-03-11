@@ -75,11 +75,6 @@ ul {
   font-size: 1.5rem;
 }
 
-.dip-list {
-  list-style: none;
-  text-align: center;
-}
-
 .dip {
   display: flex;
   justify-content: space-between;
@@ -95,11 +90,10 @@ ul {
 }
 
 .in-menu-price {
-  grid-column: 6/9;
+  grid-column: 7/9;
   grid-row: 1;
   align-self: center;
   font-size: 1.5rem;
-  justify-self: end;
 }
 
 .ingredients {

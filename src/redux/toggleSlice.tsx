@@ -1,8 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-interface ToggleBool {
-  value: boolean;
-}
+import { ToggleBool } from "./types";
 
 const initialState: ToggleBool = {
   value: false,
