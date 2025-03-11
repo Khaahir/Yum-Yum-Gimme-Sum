@@ -7,7 +7,6 @@ export const fetchApiKey = async () => {
   });
   const data = await response.json();
   const apiKey = data;
-  console.log(data);
   return apiKey;
 };
 
@@ -32,23 +31,18 @@ export const fetchMenu = async () => {
     headers: { "x-zocom": apiKey },
   });
   const data = await response.json();
-  console.log(data.items);
-  console.log(apiKey);
   return data.items;
 };
 
 export const handleCheckout = async (cartItems: CartProducts[]) => {
-  if (!cartItems || cartItems.length === 0) {
-    console.log("Cart is empty! Cannot place an order.");
-    return;
-  }
+  const apiKey = await fetchApiKey();
 
   try {
     const response = await fetch(`${BaseUrl}/{tenant}/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-zocom": "DIN_API_NYCKEL",
+        "x-zocom": apiKey,
       },
       body: JSON.stringify({
         items: cartItems.map((item) => item.id),

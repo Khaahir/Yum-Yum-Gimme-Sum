@@ -8,7 +8,6 @@ import { RootState, AppDispatch } from "../redux/store";
 function Order() {
   const dispatch = useDispatch<AppDispatch>();
   const cart = useSelector((state: RootState) => state.api.cartItems);
-  console.log(cart);
   const isOpen = useSelector(
     (state: { toggle: { value: boolean } }) => state.toggle.value
   );

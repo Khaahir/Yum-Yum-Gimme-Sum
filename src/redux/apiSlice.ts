@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { fetchApiKey, fetchMenu, handleCheckout } from "./api";
-import { ApiState, CartProducts, EtaData } from "./types";
+import { ApiState, CartProducts } from "./types";
 
 export const getApiKey = createAsyncThunk("auth/getApiKey", async () => {
   return await fetchApiKey();
@@ -38,10 +38,9 @@ const apiSlice = createSlice({
       })
       .addCase(getMenu.fulfilled, (state, action) => {
         state.menu = action.payload;
-        console.log("menu updated", action.payload);
       })
       .addCase(getCart.fulfilled, (state, action) => {
-        state.etaValue = action.payload;
+        state.etaValue = [action.payload.order];
         console.log("ETA received:", action.payload);
       });
   },
