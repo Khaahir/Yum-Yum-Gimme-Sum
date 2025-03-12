@@ -58,13 +58,25 @@ export const sendOrder = async (cartItems: CartProducts[]) => {
     console.error("Error placing order:", error);
   }
 };
-export const getOrderDetails = async (Data: EtaData) => {
+export const getOrderDetails = async (orderData: any) => {
+  console.log("🔍 Inside getOrderDetails. Received:", orderData);
+
+  // 💡 Kontrollera att orderData innehåller ett orderobjekt och hämta ID korrekt
+  const orderId = orderData?.order?.id ?? orderData?.id;
+
+  if (!orderId) {
+    console.error("❌ getOrderDetails: Missing order ID in:", orderData);
+    throw new Error("Order ID saknas!");
+  }
+
   const apiKey = await fetchApiKey();
   const tenantData = await fetchTenant();
-  console.log(`Fetching details for order ID: ${Data}`);
 
   try {
-    const response = await fetch(`${BaseUrl}/${tenantData}/orders/${Data.id}`, {
+    const url = `${BaseUrl}/${tenantData.id}/orders/${orderId}`;
+    console.log(`🛠 Fetching order details from: ${url}`);
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -72,10 +84,18 @@ export const getOrderDetails = async (Data: EtaData) => {
       },
     });
 
+    console.log("🔄 Response status:", response.status);
+
+    if (!response.ok) {
+      throw new Error(`API-fel: ${response.status} - ${response.statusText}`);
+    }
+
     const orderDetails = await response.json();
-    console.log("Order details received:", orderDetails);
-    return orderDetails;
-  } catch (error) {
-    console.error("Error fetching order details:", error);
+    console.log("🎉 Order details received from API:", orderDetails.order);
+
+    return orderDetails.order; // ✅ Returnera rätt orderobjekt
+  } catch (error: any) {
+    console.error("❌ Error fetching order details:", error);
+    return { error: error.message };
   }
 };

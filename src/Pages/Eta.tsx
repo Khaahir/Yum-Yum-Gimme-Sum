@@ -3,27 +3,29 @@ import Button from "../Componets/Button";
 import { Link } from "react-router-dom";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { showDetails, sendCart } from "../redux/apiSlice";
+import { showDetails } from "../redux/apiSlice";
 
 function Eta() {
-  const calculateETA = (timestamp: string) => {
-    const orderTime = new Date(timestamp); // Konvertera till datumobjekt
-    const now = new Date(); // Hämta aktuell tid
-
-    const diffInMs = orderTime.getTime() - now.getTime(); // Skillnad i millisekunder
-    const diffInMinutes = Math.round(diffInMs / 60000); // Omvandla till minuter
-
-    return diffInMinutes > 0 ? `${diffInMinutes} min` : "Snart klar!";
-  };
-  const orderId = useSelector((state: RootState) => state.api.orderId); // Hämta orderId från Redux
-
   const dispatch = useDispatch<AppDispatch>();
+
+  const orderId = useSelector((state: RootState) => state.api.orderId); 
+  const etaData = useSelector((state: RootState) => state.api.etaValue[0]); // Hämta ETA från Redux
 
   useEffect(() => {
     if (orderId) {
-      dispatch(showDetails()); // Skicka med orderId som argument
+      console.log("🚀 Dispatching showDetails with orderId:", orderId);
+      dispatch(showDetails({ id: orderId, eta: "", order: "" }));
     }
   }, [dispatch, orderId]);
+
+  const formatETA = (eta: string) => {
+    const etaTime = new Date(eta);
+    const now = new Date();
+    const diffInMs = etaTime.getTime() - now.getTime();
+    const diffInMinutes = Math.max(Math.round(diffInMs / 60000), 0); // Säkerställer att tiden inte blir negativ
+    return diffInMinutes > 0 ? `${diffInMinutes} minuter` : "Snart klar!";
+  };
+
   return (
     <>
       <div>
@@ -36,9 +38,10 @@ function Eta() {
           />
           <ul>
             <li>
-              <span className="eta-order">()</span>
               <span className="eta-title">DINA WONTONS TILLAGAS!</span>
-              <span className="eta-time"></span>
+              <span className="eta-time">
+                {etaData ? `Beräknad tid: ${formatETA(etaData.eta)}` : "Beräknar ETA..."}
+              </span>
             </li>
           </ul>
           <Link className="btn-new-order" to="/">
