@@ -3,8 +3,7 @@ import Button from "../Componets/Button";
 import { Link } from "react-router-dom";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { showDetails } from "../redux/apiSlice";
-import { getOrderDetails } from "../redux/api";
+import { showDetails, sendCart } from "../redux/apiSlice";
 
 function Eta() {
   const calculateETA = (timestamp: string) => {
@@ -16,13 +15,15 @@ function Eta() {
 
     return diffInMinutes > 0 ? `${diffInMinutes} min` : "Snart klar!";
   };
+  const orderId = useSelector((state: RootState) => state.api.orderId); // Hämta orderId från Redux
 
   const dispatch = useDispatch<AppDispatch>();
-  const etaValue = useSelector((state: RootState) => state.api.orderDetails);
-  console.log(etaValue.order);
+
   useEffect(() => {
-    getOrderDetails();
-  }, [dispatch]);
+    if (orderId) {
+      dispatch(showDetails()); // Skicka med orderId som argument
+    }
+  }, [dispatch, orderId]);
   return (
     <>
       <div>

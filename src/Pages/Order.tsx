@@ -2,8 +2,7 @@ import Button from "../Componets/Button";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toggleFunc } from "../redux/toggleSlice";
-import { sendOrder } from "../redux/api";
-import { showDetails } from "../redux/apiSlice";
+import { sendCart, showDetails } from "../redux/apiSlice";
 import { RootState, AppDispatch } from "../redux/store";
 
 function Order() {
@@ -42,7 +41,7 @@ function Order() {
             <Button
               variant={"incart"}
               Clicked={() => {
-                sendOrder(cart);
+                dispatch(sendCart(cart));
               }}
             >
               TAKE MY MONEY!

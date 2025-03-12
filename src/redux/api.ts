@@ -1,4 +1,5 @@
-import { CartProducts } from "./types";
+import { data } from "react-router-dom";
+import { CartProducts, EtaData } from "./types";
 const BaseUrl = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com";
 export const fetchApiKey = async () => {
   const response = await fetch(`${BaseUrl}/keys`, {
@@ -9,11 +10,10 @@ export const fetchApiKey = async () => {
   const apiKey = data;
   return apiKey;
 };
-const apiKey = await fetchApiKey();
 
 export const fetchTenant = async () => {
+  const apiKey = await fetchApiKey();
   const TenantId = `persson_${Date.now()}`;
-  // const TenantId = "hulk";
   const response = await fetch(`${BaseUrl}/tenants`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-zocom": apiKey },
@@ -33,8 +33,9 @@ export const fetchMenu = async () => {
   const data = await response.json();
   return data.items;
 };
-
+let Data: EtaData;
 export const sendOrder = async (cartItems: CartProducts[]) => {
+  const apiKey = await fetchApiKey();
   const TenantId = await fetchTenant();
   try {
     const response = await fetch(`${BaseUrl}/${TenantId}/orders`, {
@@ -50,21 +51,20 @@ export const sendOrder = async (cartItems: CartProducts[]) => {
     });
 
     console.log("Sending items:", cartItems);
-    const Data = await response.json();
-    const orderId = Data.order.id;
-    console.log("Order placed successfully!", Data, "and id is ", orderId);
-    return orderId;
+    Data = await response.json();
+
+    return Data;
   } catch (error) {
     console.error("Error placing order:", error);
   }
 };
-
-export const getOrderDetails = async () => {
-  const tenantData = await fetchTenant(); // Ensure correct tenant is used
-  console.log(`Fetching details for order ID: ${"0z01oduy"}`);
+export const getOrderDetails = async (Data: EtaData) => {
+  const apiKey = await fetchApiKey();
+  const tenantData = await fetchTenant();
+  console.log(`Fetching details for order ID: ${Data}`);
 
   try {
-    const response = await fetch(`${BaseUrl}/${tenantData}/orders/0z01oduy`, {
+    const response = await fetch(`${BaseUrl}/${tenantData}/orders/${Data.id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -74,8 +74,6 @@ export const getOrderDetails = async () => {
 
     const orderDetails = await response.json();
     console.log("Order details received:", orderDetails);
-    console.log("0z01oduy");
-
     return orderDetails;
   } catch (error) {
     console.error("Error fetching order details:", error);

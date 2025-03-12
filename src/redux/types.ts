@@ -29,11 +29,14 @@ export interface EtaData {
   eta: string;
   order: string;
 }
+export type FetchStatus = "idle" | "loading" | "succeeded" | "failed";
 
 export interface ApiState {
   apiKey: string;
   menu: MenuData[];
   cartItems: CartProducts[];
   etaValue: EtaData[];
-  orderDetails: any[];
+  orderId: string;
+  status: FetchStatus;
+  error?: string | null;
 }
