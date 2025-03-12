@@ -4,6 +4,7 @@ interface IButtonProps {
   Clicked?: () => void;
   variant: string;
   children: ReactNode;
+  Clicked2?: () => void;
 }
 
 function Button({ Clicked, variant, children }: IButtonProps) {

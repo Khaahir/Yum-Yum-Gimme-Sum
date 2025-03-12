@@ -3,7 +3,8 @@ import Button from "../Componets/Button";
 import { Link } from "react-router-dom";
 import { AppDispatch, RootState } from "../redux/store";
 import { useDispatch, useSelector } from "react-redux";
-import { getCart } from "../redux/apiSlice";
+import { showDetails } from "../redux/apiSlice";
+import { getOrderDetails } from "../redux/api";
 
 function Eta() {
   const calculateETA = (timestamp: string) => {
@@ -17,12 +18,10 @@ function Eta() {
   };
 
   const dispatch = useDispatch<AppDispatch>();
-  const etaData = useSelector((state: RootState) => state.api.etaValue || []);
-  const carItems = useSelector((state: RootState) => state.api.cartItems || []);
-  console.log(etaData);
-
+  const etaValue = useSelector((state: RootState) => state.api.orderDetails);
+  console.log(etaValue.order);
   useEffect(() => {
-    dispatch(getCart(carItems));
+    getOrderDetails();
   }, [dispatch]);
   return (
     <>
@@ -35,13 +34,11 @@ function Eta() {
             alt="logo on a box"
           />
           <ul>
-            {etaData.map((items) => (
-              <li key={items.id}>
-                <span className="eta-order">{items.id}</span>
-                <span className="eta-title">DINA WONTONS TILLAGAS!</span>
-                <span className="eta-time">{calculateETA(items.eta)}</span>
-              </li>
-            ))}
+            <li>
+              <span className="eta-order">()</span>
+              <span className="eta-title">DINA WONTONS TILLAGAS!</span>
+              <span className="eta-time"></span>
+            </li>
           </ul>
           <Link className="btn-new-order" to="/">
             <Button variant="new-order">GÖR EN NY BESTÄLLNING</Button>

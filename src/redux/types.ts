@@ -27,6 +27,7 @@ export interface CartState {
 export interface EtaData {
   id: string;
   eta: string;
+  order: string;
 }
 
 export interface ApiState {
@@ -34,4 +35,5 @@ export interface ApiState {
   menu: MenuData[];
   cartItems: CartProducts[];
   etaValue: EtaData[];
+  orderDetails: any[];
 }

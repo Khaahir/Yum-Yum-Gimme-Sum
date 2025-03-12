@@ -9,19 +9,19 @@ export const fetchApiKey = async () => {
   const apiKey = data;
   return apiKey;
 };
+const apiKey = await fetchApiKey();
 
 export const fetchTenant = async () => {
-  const diffname = `persson_${Date.now()}`;
-  const apiKey = await fetchApiKey();
+  const TenantId = `persson_${Date.now()}`;
+  // const TenantId = "hulk";
   const response = await fetch(`${BaseUrl}/tenants`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-zocom": apiKey },
-    body: JSON.stringify({ name: `${diffname}` }),
+    body: JSON.stringify({ name: `${TenantId}` }),
   });
 
-  console.log(apiKey);
-  const data = await response.json();
-  console.log("tenant data resp: ", data);
+  const tenantData = await response.json();
+  return tenantData;
 };
 
 export const fetchMenu = async () => {
@@ -34,25 +34,50 @@ export const fetchMenu = async () => {
   return data.items;
 };
 
-export const handleCheckout = async (cartItems: CartProducts[]) => {
-  const apiKey = await fetchApiKey();
-
+export const sendOrder = async (cartItems: CartProducts[]) => {
+  const TenantId = await fetchTenant();
   try {
-    const response = await fetch(`${BaseUrl}/{tenant}/orders`, {
+    const response = await fetch(`${BaseUrl}/${TenantId}/orders`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-zocom": apiKey,
       },
+
       body: JSON.stringify({
         items: cartItems.map((item) => item.id),
       }),
     });
 
-    const etaData = await response.json();
-    console.log("Order placed successfully!", etaData);
-    return etaData;
+    console.log("Sending items:", cartItems);
+    const Data = await response.json();
+    const orderId = Data.order.id;
+    console.log("Order placed successfully!", Data, "and id is ", orderId);
+    return orderId;
   } catch (error) {
     console.error("Error placing order:", error);
+  }
+};
+
+export const getOrderDetails = async () => {
+  const tenantData = await fetchTenant(); // Ensure correct tenant is used
+  console.log(`Fetching details for order ID: ${"0z01oduy"}`);
+
+  try {
+    const response = await fetch(`${BaseUrl}/${tenantData}/orders/0z01oduy`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-zocom": apiKey,
+      },
+    });
+
+    const orderDetails = await response.json();
+    console.log("Order details received:", orderDetails);
+    console.log("0z01oduy");
+
+    return orderDetails;
+  } catch (error) {
+    console.error("Error fetching order details:", error);
   }
 };

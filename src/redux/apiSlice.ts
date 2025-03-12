@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { fetchApiKey, fetchMenu, handleCheckout } from "./api";
+import { fetchApiKey, fetchMenu, sendOrder, getOrderDetails } from "./api";
 import { ApiState, CartProducts } from "./types";
+import { act } from "react";
 
 export const getApiKey = createAsyncThunk("auth/getApiKey", async () => {
   return await fetchApiKey();
@@ -11,12 +12,17 @@ export const getMenu = createAsyncThunk("menu/getMenu", async () => {
   return await fetchMenu();
 });
 
-export const getCart = createAsyncThunk(
+export const sendCart = createAsyncThunk(
   "cart/getCart",
   async (cartItems: CartProducts[]) => {
-    return await handleCheckout(cartItems);
+    return await sendOrder(cartItems);
   }
 );
+
+export const showDetails = createAsyncThunk("details/showcart", async () => {
+  return await getOrderDetails();
+});
+
 const apiSlice = createSlice({
   name: "apiFetch",
   initialState: {
@@ -24,6 +30,7 @@ const apiSlice = createSlice({
     menu: [],
     cartItems: [],
     etaValue: [],
+    orderDetails: [],
   } as ApiState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartProducts>) => {
@@ -39,9 +46,12 @@ const apiSlice = createSlice({
       .addCase(getMenu.fulfilled, (state, action) => {
         state.menu = action.payload;
       })
-      .addCase(getCart.fulfilled, (state, action) => {
-        state.etaValue = [action.payload.order];
-        console.log("ETA received:", action.payload);
+      .addCase(sendCart.fulfilled, (state, action) => {
+        state.etaValue = [action.payload];
+      })
+      .addCase(showDetails.fulfilled, (state, action) => {
+        state.orderDetails = [action.payload];
+        console.log(action.payload.order);
       });
   },
 });

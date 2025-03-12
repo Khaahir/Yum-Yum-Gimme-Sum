@@ -2,7 +2,8 @@ import Button from "../Componets/Button";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { toggleFunc } from "../redux/toggleSlice";
-import { handleCheckout } from "../redux/api";
+import { sendOrder } from "../redux/api";
+import { showDetails } from "../redux/apiSlice";
 import { RootState, AppDispatch } from "../redux/store";
 
 function Order() {
@@ -11,7 +12,6 @@ function Order() {
   const isOpen = useSelector(
     (state: { toggle: { value: boolean } }) => state.toggle.value
   );
-
   return (
     <>
       <Button variant="cart" Clicked={() => dispatch(toggleFunc())}>
@@ -39,7 +39,12 @@ function Order() {
             <span className="in-cart-price">SEK</span>
           </div>
           <Link className="btn-incart" to="/eta">
-            <Button variant={"incart"} Clicked={() => handleCheckout(cart)}>
+            <Button
+              variant={"incart"}
+              Clicked={() => {
+                sendOrder(cart);
+              }}
+            >
               TAKE MY MONEY!
             </Button>
           </Link>
