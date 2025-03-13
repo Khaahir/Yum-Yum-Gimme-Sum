@@ -10,12 +10,19 @@ export const getMenu = createAsyncThunk("menu/getMenu", async () => {
   return await fetchMenu();
 });
 
-export const sendCart = createAsyncThunk<{ order: EtaData } | undefined, CartProducts[]>(
-  "cart/getCart",
-  async (cartItems) => {
-    return await sendOrder(cartItems);
-  }
-);
+export const sendCart = createAsyncThunk<
+  { order: EtaData } | undefined,
+  CartProducts[]
+>("cart/getCart", async (cartItems) => {
+  const formattedCart = cartItems.map((item) => ({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    quantity: item.quantity,
+  }));
+
+  return await sendOrder(formattedCart);
+});
 
 export const showDetails = createAsyncThunk(
   "details/showcart",
@@ -42,27 +49,43 @@ const apiSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartProducts>) => {
-      const existingItem = state.cartItems.find((item) => item.id === action.payload.id);
+      const existingItem = state.cartItems.find(
+        (item) => item.id === action.payload.id
+      );
       if (existingItem) {
-        (existingItem as any).quantity = ((existingItem as any).quantity || 1) + 1;
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
       } else {
-        state.cartItems.push({ ...action.payload, quantity: 1 } as any);
+        state.cartItems.push({ ...action.payload, quantity: 1 });
       }
     },
-    decreaseQuantity: (state, action: PayloadAction<number>) => {
-      const itemIndex = state.cartItems.findIndex((item) => item.id === action.payload);
+    increase: (state, action: PayloadAction<number>) => {
+      const item = state.cartItems.find((item) => item.id === action.payload);
+      if (item) {
+        item.quantity += 1; // ✅ Now properly increases quantity
+      }
+    },
+    decrease: (state, action: PayloadAction<number>) => {
+      const itemIndex = state.cartItems.findIndex(
+        (item) => item.id === action.payload
+      );
       if (itemIndex !== -1) {
-        if ((state.cartItems[itemIndex] as any).quantity > 1) {
-          (state.cartItems[itemIndex] as any).quantity--;
+        if (state.cartItems[itemIndex].quantity > 1) {
+          state.cartItems[itemIndex].quantity -= 1; // ✅ Now properly decreases quantity
         } else {
-          state.cartItems.splice(itemIndex, 1);
+          state.cartItems.splice(itemIndex, 1); // Remove item if quantity is 0
         }
       }
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
-      state.cartItems = state.cartItems.filter((item) => item.id !== action.payload);
+      state.cartItems = state.cartItems.filter(
+        (item) => item.id !== action.payload
+      );
+    },
+    clearCart: (state) => {
+      state.cartItems = [];
     },
   },
+
   extraReducers: (builder) => {
     builder
       .addCase(getApiKey.pending, (state) => {
@@ -90,16 +113,19 @@ const apiSlice = createSlice({
       .addCase(sendCart.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(sendCart.fulfilled, (state, action: PayloadAction<{ order: EtaData } | undefined>) => {
-        state.status = "succeeded";
-        if (action.payload?.order) {
-          console.log("✅ sendCart response:", action.payload.order);
-          state.etaValue = [action.payload.order];
-          state.orderId = action.payload.order.id;
-        } else {
-          console.error("❌ sendCart fick undefined eller felaktig data!");
+      .addCase(
+        sendCart.fulfilled,
+        (state, action: PayloadAction<{ order: EtaData } | undefined>) => {
+          state.status = "succeeded";
+          if (action.payload?.order) {
+            console.log("✅ sendCart response:", action.payload.order);
+            state.etaValue = [action.payload.order];
+            state.orderId = action.payload.order.id;
+          } else {
+            console.error("❌ sendCart fick undefined eller felaktig data!");
+          }
         }
-      })
+      )
       .addCase(sendCart.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
@@ -107,12 +133,15 @@ const apiSlice = createSlice({
       .addCase(showDetails.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(showDetails.fulfilled, (state, action: PayloadAction<EtaData | undefined>) => {
-        state.status = "succeeded";
-        if (action.payload) {
-          state.etaValue = [action.payload]; // Spara hela orderinformationen
+      .addCase(
+        showDetails.fulfilled,
+        (state, action: PayloadAction<EtaData | undefined>) => {
+          state.status = "succeeded";
+          if (action.payload) {
+            state.etaValue = [action.payload]; // Spara hela orderinformationen
+          }
         }
-      })
+      )
       .addCase(showDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
@@ -120,5 +149,6 @@ const apiSlice = createSlice({
   },
 });
 
-export const { addToCart, decreaseQuantity, removeFromCart } = apiSlice.actions;
+export const { addToCart, decrease, increase, removeFromCart, clearCart } =
+  apiSlice.actions;
 export default apiSlice.reducer;

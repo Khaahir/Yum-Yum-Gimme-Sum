@@ -18,6 +18,7 @@ export interface CartProducts {
   id: number;
   name: string;
   price: number;
+  quantity: number;
 }
 
 export interface CartState {

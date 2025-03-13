@@ -59,7 +59,6 @@ export const sendOrder = async (cartItems: CartProducts[]) => {
   }
 };
 export const getOrderDetails = async (orderData: any) => {
-  console.log("🔍 Inside getOrderDetails. Received:", orderData);
 
   // 💡 Kontrollera att orderData innehåller ett orderobjekt och hämta ID korrekt
   const orderId = orderData?.order?.id ?? orderData?.id;

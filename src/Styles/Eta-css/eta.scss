@@ -11,19 +11,30 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
 }
+
 .eta-logo {
-  grid-column: 1/3;
+  grid-column: 1/2;
   margin: 1rem;
+  justify-self: start;
 }
 
 .eta-food-box {
   grid-column: 1/9;
 }
 
+.eta-list {
+  grid-column: 1/9;
+  height: 100%;
+}
+.eta-li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .eta-title {
   font-size: 2rem;
   grid-column: 1/9;
-  justify-self: center;
   text-align: center;
   margin-bottom: 2rem;
 }

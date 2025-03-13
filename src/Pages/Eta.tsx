@@ -8,8 +8,9 @@ import { showDetails } from "../redux/apiSlice";
 function Eta() {
   const dispatch = useDispatch<AppDispatch>();
 
-  const orderId = useSelector((state: RootState) => state.api.orderId); 
-  const etaData = useSelector((state: RootState) => state.api.etaValue[0]); // Hämta ETA från Redux
+  const orderId = useSelector((state: RootState) => state.api.orderId);
+  const etaData = useSelector((state: RootState) => state.api.etaValue[0]);
+  const cart = useSelector((state: RootState) => state.api.cartItems);
 
   useEffect(() => {
     if (orderId) {
@@ -22,7 +23,7 @@ function Eta() {
     const etaTime = new Date(eta);
     const now = new Date();
     const diffInMs = etaTime.getTime() - now.getTime();
-    const diffInMinutes = Math.max(Math.round(diffInMs / 60000), 0); // Säkerställer att tiden inte blir negativ
+    const diffInMinutes = Math.max(Math.round(diffInMs / 600000), 0);
     return diffInMinutes > 0 ? `${diffInMinutes} minuter` : "Snart klar!";
   };
 
@@ -36,12 +37,15 @@ function Eta() {
             src="./src/assets/boxtop.svg"
             alt="logo on a box"
           />
-          <ul>
-            <li>
+          <ul className=" eta-list">
+            <li className="eta-li">
               <span className="eta-title">DINA WONTONS TILLAGAS!</span>
               <span className="eta-time">
-                {etaData ? `Beräknad tid: ${formatETA(etaData.eta)}` : "Beräknar ETA..."}
+                {etaData
+                  ? `Beräknad tid: ${formatETA(etaData.id)}`
+                  : "Beräknar LEveransTiden..."}
               </span>
+              <span>{}</span>
             </li>
           </ul>
           <Link className="btn-new-order" to="/">
