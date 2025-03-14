@@ -1,6 +1,7 @@
 import { data } from "react-router-dom";
 import { CartProducts, EtaData } from "./types";
 const BaseUrl = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com";
+
 export const fetchApiKey = async () => {
   const response = await fetch(`${BaseUrl}/keys`, {
     method: "POST",
@@ -8,6 +9,7 @@ export const fetchApiKey = async () => {
   });
   const data = await response.json();
   const apiKey = data;
+
   return apiKey;
 };
 
@@ -59,7 +61,6 @@ export const sendOrder = async (cartItems: CartProducts[]) => {
   }
 };
 export const getOrderDetails = async (orderData: any) => {
-
   // 💡 Kontrollera att orderData innehåller ett orderobjekt och hämta ID korrekt
   const orderId = orderData?.order?.id ?? orderData?.id;
 
@@ -92,7 +93,7 @@ export const getOrderDetails = async (orderData: any) => {
     const orderDetails = await response.json();
     console.log("🎉 Order details received from API:", orderDetails.order);
 
-    return orderDetails.order; // ✅ Returnera rätt orderobjekt
+    return orderDetails.order;
   } catch (error: any) {
     console.error("❌ Error fetching order details:", error);
     return { error: error.message };

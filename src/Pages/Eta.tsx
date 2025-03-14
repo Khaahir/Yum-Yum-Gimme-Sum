@@ -10,11 +10,9 @@ function Eta() {
 
   const orderId = useSelector((state: RootState) => state.api.orderId);
   const etaData = useSelector((state: RootState) => state.api.etaValue[0]);
-  const cart = useSelector((state: RootState) => state.api.cartItems);
 
   useEffect(() => {
     if (orderId) {
-      console.log("🚀 Dispatching showDetails with orderId:", orderId);
       dispatch(showDetails({ id: orderId, eta: "", order: "" }));
     }
   }, [dispatch, orderId]);
@@ -42,10 +40,9 @@ function Eta() {
               <span className="eta-title">DINA WONTONS TILLAGAS!</span>
               <span className="eta-time">
                 {etaData
-                  ? `Beräknad tid: ${formatETA(etaData.id)}`
+                  ? `Beräknad tid: ${formatETA(etaData.eta ?? "")}`
                   : "Beräknar LEveransTiden..."}
               </span>
-              <span>{}</span>
             </li>
           </ul>
           <Link className="btn-new-order" to="/">

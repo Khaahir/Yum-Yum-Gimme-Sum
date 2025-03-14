@@ -27,8 +27,8 @@ export interface CartState {
 
 export interface EtaData {
   id: string;
-  eta: string;
-  order: string;
+  eta?: string;
+  order?: string;
 }
 export type FetchStatus = "idle" | "loading" | "succeeded" | "failed";
 

@@ -49,11 +49,11 @@ const apiSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartProducts>) => {
-      const existingItem = state.cartItems.find(
+      const ProductItems = state.cartItems.find(
         (item) => item.id === action.payload.id
       );
-      if (existingItem) {
-        existingItem.quantity = (existingItem.quantity || 1) + 1;
+      if (ProductItems) {
+        ProductItems.quantity = (ProductItems.quantity || 1) + 1;
       } else {
         state.cartItems.push({ ...action.payload, quantity: 1 });
       }
@@ -118,7 +118,6 @@ const apiSlice = createSlice({
         (state, action: PayloadAction<{ order: EtaData } | undefined>) => {
           state.status = "succeeded";
           if (action.payload?.order) {
-            console.log("✅ sendCart response:", action.payload.order);
             state.etaValue = [action.payload.order];
             state.orderId = action.payload.order.id;
           } else {
