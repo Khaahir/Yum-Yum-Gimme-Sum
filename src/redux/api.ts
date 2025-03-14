@@ -1,4 +1,3 @@
-import { data } from "react-router-dom";
 import { CartProducts, EtaData } from "./types";
 const BaseUrl = "https://fdnzawlcf6.execute-api.eu-north-1.amazonaws.com";
 
@@ -13,8 +12,9 @@ export const fetchApiKey = async () => {
   return apiKey;
 };
 
+const apiKey = await fetchApiKey();
+
 export const fetchTenant = async () => {
-  const apiKey = await fetchApiKey();
   const TenantId = `persson_${Date.now()}`;
   const response = await fetch(`${BaseUrl}/tenants`, {
     method: "POST",
@@ -27,7 +27,6 @@ export const fetchTenant = async () => {
 };
 
 export const fetchMenu = async () => {
-  const apiKey = await fetchApiKey();
   const response = await fetch(`${BaseUrl}/menu`, {
     method: "GET",
     headers: { "x-zocom": apiKey },
@@ -61,7 +60,6 @@ export const sendOrder = async (cartItems: CartProducts[]) => {
   }
 };
 export const getOrderDetails = async (orderData: any) => {
-  // 💡 Kontrollera att orderData innehåller ett orderobjekt och hämta ID korrekt
   const orderId = orderData?.order?.id ?? orderData?.id;
 
   if (!orderId) {
@@ -69,7 +67,6 @@ export const getOrderDetails = async (orderData: any) => {
     throw new Error("Order ID saknas!");
   }
 
-  const apiKey = await fetchApiKey();
   const tenantData = await fetchTenant();
 
   try {
@@ -91,11 +88,10 @@ export const getOrderDetails = async (orderData: any) => {
     }
 
     const orderDetails = await response.json();
-    console.log("🎉 Order details received from API:", orderDetails.order);
 
     return orderDetails.order;
   } catch (error: any) {
-    console.error("❌ Error fetching order details:", error);
+    console.error("Error  på getOrder:", error);
     return { error: error.message };
   }
 };

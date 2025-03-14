@@ -43,6 +43,7 @@ function Eta() {
                   ? `Beräknad tid: ${formatETA(etaData.eta ?? "")}`
                   : "Beräknar LEveransTiden..."}
               </span>
+              {orderId}
             </li>
           </ul>
           <Link className="btn-new-order" to="/">

@@ -10,7 +10,6 @@ function AppRoutes() {
       <Router>
         <Routes>
           <Route path="/" element={<Menu />} />
-          {/* Pass apiKeys as a prop */}
           <Route path="eta" element={<Eta />} />
           <Route path="bill" element={<Bill />} />
         </Routes>

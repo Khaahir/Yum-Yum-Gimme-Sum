@@ -61,7 +61,7 @@ const apiSlice = createSlice({
     increase: (state, action: PayloadAction<number>) => {
       const item = state.cartItems.find((item) => item.id === action.payload);
       if (item) {
-        item.quantity += 1; // ✅ Now properly increases quantity
+        item.quantity += 1;
       }
     },
     decrease: (state, action: PayloadAction<number>) => {
@@ -70,9 +70,9 @@ const apiSlice = createSlice({
       );
       if (itemIndex !== -1) {
         if (state.cartItems[itemIndex].quantity > 1) {
-          state.cartItems[itemIndex].quantity -= 1; // ✅ Now properly decreases quantity
+          state.cartItems[itemIndex].quantity -= 1;
         } else {
-          state.cartItems.splice(itemIndex, 1); // Remove item if quantity is 0
+          state.cartItems.splice(itemIndex, 1);
         }
       }
     },
@@ -137,7 +137,7 @@ const apiSlice = createSlice({
         (state, action: PayloadAction<EtaData | undefined>) => {
           state.status = "succeeded";
           if (action.payload) {
-            state.etaValue = [action.payload]; // Spara hela orderinformationen
+            state.etaValue = [action.payload];
           }
         }
       )
